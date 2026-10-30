@@ -7,6 +7,13 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# small servers (1 vCPU / little RAM): add 2 GB swap so builds and tests do not run out of memory
+if [ "$(swapon --show | wc -l)" -eq 0 ]; then
+  echo ">> 2 GB Swap anlegen"
+  fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile >/dev/null && swapon /swapfile
+  grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+
 if ! command -v docker >/dev/null 2>&1; then
   echo ">> Docker installieren"
   curl -fsSL https://get.docker.com | sh
