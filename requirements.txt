@@ -1,0 +1,10 @@
+# Runtime (exact versions the test suite was run with)
+fastapi==0.162.0
+starlette==1.7.0
+uvicorn==0.54.0
+pydantic==2.13.5
+SQLAlchemy==2.0.40
+psycopg[binary]==3.2.10
+requests==2.34.2
+numpy==2.5.3
+python-dotenv==1.2.3

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#08090b">
+<title>AI Trader · Paper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div id="synthetic-banner" class="banner hidden">SYNTHETISCHE TESTDATEN – keine echten Kurse. Alle Trades laufen auf dem TEST-Konto und zählen nicht als Performance.</div>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">◆</span>
+    <span class="brand-name">AI TRADER</span>
+    <span class="brand-sep">/</span>
+    <span class="brand-mode" id="brand-mode">PAPER</span>
+  </div>
+  <div class="top-right">
+    <span class="pill" id="health-pill"><i class="dot"></i><span>…</span></span>
+    <button class="btn danger" id="btn-kill">Kill Switch</button>
+  </div>
+</header>
+<nav class="tabs" id="tabs">
+  <button data-tab="overview" class="active">Übersicht</button>
+  <button data-tab="scanner">Market Scanner</button>
+  <button data-tab="agents">Agent Center</button>
+  <button data-tab="terminal">Trading Terminal</button>
+  <button data-tab="performance">Performance</button>
+  <button data-tab="system">System</button>
+</nav>
+
+<main>
+<!-- ============================ OVERVIEW -->
+<section id="tab-overview" class="tab active">
+  <div class="kpis" id="kpis"></div>
+  <div class="grid two">
+    <div class="panel">
+      <div class="panel-head"><h2>Equity</h2><span class="muted" id="eq-meta"></span></div>
+      <canvas id="eq-mini" class="line-canvas"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Letzter Zyklus</h2><span class="muted" id="cycle-meta"></span></div>
+      <div id="pipeline" class="pipeline"></div>
+      <div id="no-trade" class="note"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Aktive Positionen</h2></div>
+    <div class="table-wrap"><table id="open-table"></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Entscheidungen der Agenten</h2></div>
+    <div id="feed" class="feed"></div>
+  </div>
+</section>
+
+<!-- ============================ SCANNER -->
+<section id="tab-scanner" class="tab">
+  <div class="panel">
+    <div class="panel-head"><h2>Live Market Scanner</h2><span class="muted" id="scan-meta"></span></div>
+    <div class="toolbar">
+      <input id="scan-filter" placeholder="Filter: Symbol…" autocomplete="off">
+      <select id="scan-class"><option value="">Alle</option><option value="crypto">Krypto</option><option value="stock">Aktien</option></select>
+    </div>
+    <div class="table-wrap"><table id="scan-table"></table></div>
+  </div>
+</section>
+
+<!-- ============================ AGENTS -->
+<section id="tab-agents" class="tab">
+  <div class="agents" id="agents"></div>
+</section>
+
+<!-- ============================ TERMINAL -->
+<section id="tab-terminal" class="tab">
+  <div class="panel">
+    <div class="toolbar">
+      <input id="sym-input" list="sym-list" placeholder="Symbol, z. B. BTCUSDT" autocomplete="off">
+      <datalist id="sym-list"></datalist>
+      <div class="seg" id="tf-seg">
+        <button data-tf="1m">1m</button><button data-tf="5m">5m</button><button data-tf="15m">15m</button>
+        <button data-tf="1h" class="active">1h</button><button data-tf="4h">4h</button><button data-tf="1d">1d</button>
+      </div>
+      <div class="seg" id="ind-seg">
+        <button data-ind="ema" class="active">EMA</button><button data-ind="bb" class="active">BB</button>
+      </div>
+      <span class="muted" id="chart-meta"></span>
+    </div>
+    <div id="chart" class="chart"></div>
+    <div class="legend" id="chart-legend"></div>
+  </div>
+  <div class="grid two">
+    <div class="panel">
+      <div class="panel-head"><h2>Aktive Positionen</h2></div>
+      <div class="table-wrap"><table id="term-open"></table></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Analyse</h2></div>
+      <div id="term-analysis" class="analysis"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Signale &amp; Begründungen</h2></div>
+    <div id="signals" class="signals"></div>
+  </div>
+</section>
+
+<!-- ============================ PERFORMANCE -->
+<section id="tab-performance" class="tab">
+  <div class="kpis" id="perf-kpis"></div>
+  <div class="panel">
+    <div class="panel-head"><h2>Equity-Kurve</h2><span class="muted">inkl. Gebühren &amp; Slippage</span></div>
+    <canvas id="eq-big" class="line-canvas big"></canvas>
+    <canvas id="dd-big" class="line-canvas small"></canvas>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Strategien</h2><span class="muted">nur abgeschlossene Paper-Trades</span></div>
+    <div class="table-wrap"><table id="strat-table"></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Erkenntnisse des Performance Analyst</h2></div>
+    <div id="findings"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Trade-Historie</h2></div>
+    <div class="table-wrap"><table id="hist-table"></table></div>
+  </div>
+</section>
+
+<!-- ============================ SYSTEM -->
+<section id="tab-system" class="tab">
+  <div class="grid two">
+    <div class="panel">
+      <div class="panel-head"><h2>Komponenten</h2><span class="muted" id="health-meta"></span></div>
+      <div id="components" class="components"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Steuerung</h2></div>
+      <div class="controls">
+        <div class="control-row"><div><b>Kill Switch</b><div class="muted" id="ks-state"></div></div>
+          <div class="btns"><button class="btn danger" id="ks-on">Aktivieren</button><button class="btn danger" id="ks-flat">Aktivieren + glattstellen</button><button class="btn" id="ks-off">Aufheben</button><button class="btn" id="ks-test">Testen</button></div></div>
+        <div class="control-row"><div><b>Handelsstopp (Risikolimit)</b><div class="muted" id="halt-state"></div></div>
+          <div class="btns"><button class="btn" id="halt-reset">Manuell freigeben</button></div></div>
+        <div class="control-row"><div><b>Integrations-Selbsttest</b><div class="muted">Künstlicher Datensatz, Konto SELFTEST, zählt nie als Performance</div></div>
+          <div class="btns"><button class="btn" id="st-run">Selbsttest starten</button></div></div>
+        <div id="selftest" class="selftest"></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Echtgeld-Modus</h2><span class="pill red-pill">DEAKTIVIERT</span></div>
+    <div id="live-gate"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Zyklen (Nachweis jedes Schritts)</h2></div>
+    <div class="table-wrap"><table id="cycles-table"></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Fehlerprotokoll</h2></div>
+    <div id="errors" class="feed"></div>
+  </div>
+</section>
+</main>
+
+<div id="modal" class="modal hidden"><div class="modal-card"><button class="modal-x" id="modal-x">×</button><div id="modal-body"></div></div></div>
+<div id="toast" class="toast hidden"></div>
+<script src="/static/chart.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Alternative to a VPS: Render Blueprint (Dashboard -> New -> Blueprint -> this repo).
+# Note: background workers are paid on Render (Starter plan). Set DASHBOARD_PASSWORD in the dashboard.
+databases:
+  - name: trader-db
+    plan: basic-256mb
+    databaseName: trading
+
+services:
+  - type: web
+    name: trader-api
+    runtime: docker
+    plan: starter
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: { name: trader-db, property: connectionString }
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      - key: MARKET_DATA_MODE
+        value: live
+  - type: worker
+    name: trader-worker
+    runtime: docker
+    plan: starter
+    dockerCommand: python -m app.worker
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: { name: trader-db, property: connectionString }
+      - key: MARKET_DATA_MODE
+        value: live
